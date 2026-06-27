@@ -12,183 +12,59 @@
     <!-- Vue 3 -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  </head>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
-  <body class="bg-base-200">
-    <div id="app" class="max-w-4xl mx-auto p-6">
-      <!-- BREADCRUMB -->
-      <div class="text-sm breadcrumbs mb-4">
-        <ul>
-          <li><a href="index.html" class="link link-hover"><i class="fas fa-home mr-1"></i>Início</a></li>
-          <li>{{ tutorial.titulo }}</li>
-        </ul>
-      </div>
-
-      <!-- TOAST -->
-      <div class="toast toast-end z-50" v-if="toast">
-        <div class="alert alert-success shadow-lg">
-          <span>{{ toast }}</span>
-        </div>
-      </div>
-
-      <!-- HEADER -->
-      <div class="mb-6">
-        <h1 class="text-3xl font-bold mb-1">{{ tutorial.titulo }}</h1>
-        <p class="text-base-content/70 text-sm leading-relaxed">
-          {{ tutorial.descricao }}
-        </p>
-      </div>
-
-      <!-- TABS -->
-      <div role="tablist" class="tabs tabs-boxed bg-base-100 p-1 shadow mb-6">
-        <a
-          v-for="p in plataformas"
-          :key="p.id"
-          role="tab"
-          @click="trocarPlataforma(p.id)"
-          :class="[
-            'tab flex gap-2 items-center transition-all duration-300',
-            plataformaAtiva === p.id
-              ? 'tab-active font-semibold'
-              : 'opacity-70 hover:opacity-100'
-          ]"
-        >
-          <i :class="p.icone"></i>
-          {{ p.nome }}
-        </a>
-      </div>
-
-      <!-- LOADING -->
-      <div v-if="loading" class="text-center py-10">
-        <span class="loading loading-spinner loading-lg"></span>
-      </div>
-
-      <!-- ERRO -->
-      <div v-else-if="erro" class="alert alert-error">
-        <i class="fas fa-exclamation-triangle"></i>
-        <span>{{ erro }}</span>
-      </div>
-
-      <!-- CONTEÚDO -->
-      <transition name="fade" mode="out-in">
-        <div v-if="passos.length" :key="plataformaAtiva">
-          <div
-            v-for="(passo, index) in passos"
-            :key="index"
-            class="collapse collapse-arrow bg-base-100 mb-4 border-l-4 shadow transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-            :class="[
-              'border-' + passo.cor + '-500',
-              isPassoManual(passo) && isPassoConcluido(index) ? 'opacity-60' : ''
-            ]"
-          >
-            <!-- ABRE PRIMEIRO PASSO -->
-            <input type="checkbox" :checked="index === 0" />
-
-            <!-- TÍTULO -->
-            <div class="collapse-title">
-              <h2 class="font-semibold text-lg flex items-center gap-3">
-                {{ index + 1 }}. {{ passo.titulo }}
-                <span
-                  v-if="isPassoManual(passo) && isPassoConcluido(index)"
-                  class="badge badge-success gap-1 text-xs"
-                >
-                  <i class="fas fa-check"></i> Concluído
-                </span>
-              </h2>
-            </div>
-
-            <!-- CONTEÚDO -->
-            <div class="collapse-content">
-              <!-- ALERTA DOWNLOAD/CONFIG -->
-              <div
-                v-if="passo.tipo === 'download' || passo.tipo === 'configuracao'"
-                class="alert mb-4"
-                :class="passo.tipo === 'download' ? 'alert-info' : 'alert-warning'"
-              >
-                <i :class="passo.tipo === 'download' ? 'fas fa-download' : 'fas fa-wrench'"></i>
-                <span>
-                  {{ passo.tipo === 'download' ? 'Download necessário' : 'Passo manual necessário' }}
-                </span>
-              </div>
-
-              <!-- LINK PARA DOWNLOAD -->
-              <div v-if="passo.link" class="mb-4">
-                <a
-                  :href="passo.link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="btn btn-sm btn-primary gap-2"
-                >
-                  <i class="fas fa-external-link-alt"></i>
-                  {{ passo.linkTexto || 'Ir para o site' }}
-                </a>
-              </div>
-
-              <!-- DESCRIÇÃO DO DOWNLOAD -->
-              <div v-if="passo.descricaoDownload" class="bg-base-200 p-3 rounded mb-3 text-sm">
-                <span class="font-semibold">📋 Recomendações:</span>
-                <p class="mt-1">{{ passo.descricaoDownload }}</p>
-              </div>
-
-              <!-- INSTRUÇÕES PASSO A PASSO -->
-              <div v-if="passo.instrucoes" class="mb-4">
-                <div class="font-semibold text-sm mb-2 flex items-center gap-2">
-                  <i class="fas fa-list-ol"></i>
-                  Passos:
-                </div>
-                <ul class="list-decimal list-inside space-y-1 text-sm opacity-90">
-                  <li v-for="(instr, i) in passo.instrucoes" :key="i">
-                    {{ instr }}
-                  </li>
-                </ul>
-              </div>
-
-              <!-- TEXTO -->
-              <p
-                v-if="passo.texto"
-                class="mb-3 text-base-content/70 text-sm leading-relaxed"
-              >
-                {{ passo.texto }}
-              </p>
-
-              <!-- CÓDIGO -->
-              <div
-                v-if="passo.codigo"
-                class="mockup-code text-sm relative overflow-x-auto"
-              >
-                <!-- HEADER -->
-                <div class="flex justify-between items-center mb-2 px-2">
-                  <span class="text-xs opacity-60">
-                    {{ passo.tipo === 'output' ? 'Output' : 'Terminal' }}
-                  </span>
-
-                  <!-- BOTÃO COPIAR -->
-                  <button
-                    @click="copiarCodigo(passo.codigo)"
-                    class="btn btn-xs btn-ghost"
-                  >
-                    <i class="fas fa-copy"></i>
-                  </button>
-                </div>
-
-                <!-- LINHAS -->
-                <div v-for="(linha, i) in passo.codigo" :key="i">
-                  <pre
-                    class="whitespace-pre-wrap"
-                    :data-prefix="passo.prefixo || (passo.tipo === 'output' ? '>' : '$')"
-                    :class="passo.tipo === 'output' ? 'text-green-400' : ''"
-                  ><code>{{ linha }}</code></pre>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </transition>
-    </div>
-
+    <!-- Design System -->
     <style>
+      :root {
+        --background: #ffffff;
+        --foreground: oklch(0.145 0 0);
+        --primary: #030213;
+        --primary-foreground: #ffffff;
+        --muted: #ececf0;
+        --muted-foreground: #717182;
+        --border: rgba(0, 0, 0, 0.1);
+        --radius: 0.625rem;
+        --b1: var(--background);
+        --b2: var(--muted);
+        --b3: #e2e2e8;
+        --bc: var(--foreground);
+        --p: var(--primary);
+        --pc: var(--primary-foreground);
+        --s: var(--muted);
+        --sc: var(--foreground);
+        --in: #3b82f6;
+        --inc: #ffffff;
+        --su: #22c55e;
+        --suc: #ffffff;
+        --wa: #f59e0b;
+        --wac: #ffffff;
+        --er: #ef4444;
+        --erc: #ffffff;
+      }
+      html.dark {
+        --background: oklch(0.145 0 0);
+        --foreground: oklch(0.985 0 0);
+        --primary: oklch(0.985 0 0);
+        --primary-foreground: oklch(0.145 0 0);
+        --muted: oklch(0.269 0 0);
+        --muted-foreground: oklch(0.708 0 0);
+        --border: oklch(0.269 0 0);
+        --b1: var(--background);
+        --b2: var(--muted);
+        --b3: oklch(0.32 0 0);
+        --bc: var(--foreground);
+        --p: var(--primary);
+        --pc: var(--primary-foreground);
+        --s: var(--muted);
+        --sc: var(--foreground);
+      }
+      html { color-scheme: light; }
+      html.dark { color-scheme: dark; }
+      body { background-color: var(--background); color: var(--foreground); }
+
+      .copy-btn:hover { color: #c9d1d9 !important; }
       .fade-enter-active,
       .fade-leave-active {
         transition: all 0.25s ease;
@@ -202,6 +78,205 @@
         transform: translateY(-10px);
       }
     </style>
+  </head>
+
+  <body>
+    <div id="app" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- BREADCRUMB -->
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-2 text-sm" style="color: var(--muted-foreground)">
+          <a href="index.html" class="hover:underline" style="color: var(--muted-foreground)">
+            <i data-lucide="home" class="h-4 w-4 inline-block align-text-bottom mr-1"></i>
+            Início
+          </a>
+          <span>/</span>
+          <span style="color: var(--foreground)">{{ tutorial.titulo }}</span>
+        </div>
+
+        <!-- DARK MODE TOGGLE -->
+        <button
+          @click="toggleDarkMode"
+          class="btn btn-ghost btn-sm btn-square rounded-lg"
+          :title="isDark ? 'Modo claro' : 'Modo escuro'"
+        >
+          <i v-if="isDark" data-lucide="sun" class="h-5 w-5"></i>
+          <i v-else data-lucide="moon" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <!-- TOAST -->
+      <div class="toast toast-end z-50" v-if="toast">
+        <div class="flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg" style="background-color: var(--b1); border: 1px solid var(--border);">
+          <i data-lucide="check-circle" width="16" height="16" style="color: var(--su)"></i>
+          <span class="text-sm font-medium">{{ toast }}</span>
+        </div>
+      </div>
+
+      <!-- HEADER -->
+      <div class="mb-6">
+        <h1 class="text-2xl sm:text-3xl font-medium tracking-tight mb-1">{{ tutorial.titulo }}</h1>
+        <p class="text-sm leading-relaxed" style="color: var(--muted-foreground)">
+          {{ tutorial.descricao }}
+        </p>
+      </div>
+
+      <!-- PROGRESS BAR -->
+      <div v-if="passos.length > 0" class="mb-6">
+        <div class="flex items-center justify-between text-xs mb-1.5" style="color: var(--muted-foreground)">
+          <span>Progresso</span>
+          <span>{{ completedSteps }}/{{ totalSteps }} passos</span>
+        </div>
+        <div class="h-1.5 rounded-full overflow-hidden" style="background-color: var(--muted)">
+          <div
+            class="h-full rounded-full transition-all duration-500 ease-out"
+            :style="{ width: progressPercent + '%', backgroundColor: 'var(--primary)' }"
+          ></div>
+        </div>
+      </div>
+
+      <!-- PLATFORM TABS -->
+      <div class="flex gap-1 mb-6 rounded-lg p-1" style="background-color: var(--muted)">
+        <button
+          v-for="p in plataformas"
+          :key="p.id"
+          @click="trocarPlataforma(p.id)"
+          class="flex-1 sm:flex-none px-4 py-2 text-sm font-medium rounded-md transition-all duration-200"
+          :style="plataformaAtiva === p.id ? { backgroundColor: 'var(--b1)', color: 'var(--foreground)', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' } : { color: 'var(--muted-foreground)' }"
+        >
+          {{ p.nome }}
+        </button>
+      </div>
+
+      <!-- LOADING -->
+      <div v-if="loading" class="flex items-center justify-center py-16">
+        <i data-lucide="loader" class="h-6 w-6 animate-spin" style="color: var(--muted-foreground)"></i>
+        <span class="ml-3 text-sm" style="color: var(--muted-foreground)">Carregando tutorial...</span>
+      </div>
+
+      <!-- ERRO -->
+      <div v-else-if="erro" class="flex items-center gap-3 p-4 rounded-lg" style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);">
+        <i data-lucide="alert-triangle" class="h-5 w-5 flex-shrink-0" style="color: var(--er)"></i>
+        <span style="color: var(--er)">{{ erro }}</span>
+      </div>
+
+      <!-- CONTEÚDO -->
+      <transition name="fade" mode="out-in">
+        <div v-if="passos.length" :key="plataformaAtiva" class="space-y-4">
+          <div
+            v-for="(passo, index) in passos"
+            :key="index"
+            class="collapse rounded-xl border transition-all duration-200"
+            :class="isPassoManual(passo) && isPassoConcluido(index) ? 'opacity-60' : 'hover:shadow-sm'"
+            :style="{ backgroundColor: 'var(--b1)', borderColor: 'var(--border)', borderLeftColor: getBorderColor(passo.cor), borderLeftWidth: '4px' }"
+          >
+            <input type="checkbox" :checked="index === 0" />
+
+            <!-- TÍTULO -->
+            <div class="collapse-title min-h-0 py-4 pl-6 pr-4">
+              <h2 class="font-medium flex items-center gap-3">
+                <span class="flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold shrink-0" :style="{ backgroundColor: getColorWithOpacity(passo.cor, 0.15), color: getBorderColor(passo.cor) }">
+                  {{ index + 1 }}
+                </span>
+                <span>{{ passo.titulo }}</span>
+                <span
+                  v-if="isPassoManual(passo) && isPassoConcluido(index)"
+                  class="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ml-auto"
+                  :style="{ backgroundColor: 'rgba(34,197,94,0.15)', color: '#16a34a' }"
+                >
+                  <i data-lucide="check" class="h-3 w-3"></i>
+                  Concluído
+                </span>
+              </h2>
+            </div>
+
+            <!-- CONTEÚDO -->
+            <div class="collapse-content px-6 pb-4">
+              <!-- ALERTA DOWNLOAD/CONFIG -->
+              <div
+                v-if="passo.tipo === 'download' || passo.tipo === 'configuracao'"
+                class="flex items-center gap-2 px-4 py-3 rounded-lg mb-4 text-sm"
+                :style="passo.tipo === 'download' ? { backgroundColor: 'rgba(59,130,246,0.1)', color: '#2563eb', border: '1px solid rgba(59,130,246,0.2)' } : { backgroundColor: 'rgba(245,158,11,0.1)', color: '#d97706', border: '1px solid rgba(245,158,11,0.2)' }"
+              >
+                <i :data-lucide="passo.tipo === 'download' ? 'download' : 'wrench'" class="h-4 w-4 shrink-0"></i>
+                <span class="font-medium">{{ passo.tipo === 'download' ? 'Download necessário' : 'Passo manual necessário' }}</span>
+              </div>
+
+              <!-- LINK PARA DOWNLOAD -->
+              <div v-if="passo.link" class="mb-4">
+                <a
+                  :href="passo.link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200"
+                  :style="{ backgroundColor: 'var(--primary)', color: 'var(--pc)' }"
+                >
+                  <i data-lucide="external-link" class="h-4 w-4"></i>
+                  {{ passo.linkTexto || 'Ir para o site' }}
+                </a>
+              </div>
+
+              <!-- DESCRIÇÃO DO DOWNLOAD -->
+              <div v-if="passo.descricaoDownload" class="px-4 py-3 rounded-lg mb-4 text-sm" :style="{ backgroundColor: 'var(--muted)' }">
+                <span class="font-medium" style="color: var(--muted-foreground)">Recomendações:</span>
+                <p class="mt-1" style="color: var(--foreground)">{{ passo.descricaoDownload }}</p>
+              </div>
+
+              <!-- INSTRUÇÕES PASSO A PASSO -->
+              <div v-if="passo.instrucoes" class="mb-4">
+                <div class="flex items-center gap-2 font-medium text-sm mb-2" style="color: var(--muted-foreground)">
+                  <i data-lucide="list" width="16" height="16"></i>
+                  Passos:
+                </div>
+                <ul class="list-decimal list-inside space-y-1 text-sm" style="color: var(--muted-foreground)">
+                  <li v-for="(instr, i) in passo.instrucoes" :key="i" style="color: var(--foreground)">
+                    {{ instr }}
+                  </li>
+                </ul>
+              </div>
+
+              <!-- TEXTO -->
+              <p
+                v-if="passo.texto"
+                class="mb-4 text-sm leading-relaxed"
+                style="color: var(--muted-foreground)"
+              >
+                {{ passo.texto }}
+              </p>
+
+              <!-- CÓDIGO -->
+              <div
+                v-if="passo.codigo"
+                class="rounded-xl overflow-hidden text-sm"
+                style="background: #0d1117; border: 1px solid #30363d;"
+              >
+                <!-- HEADER -->
+                <div class="flex items-center justify-between px-4 py-2.5" style="background: #161b22; border-bottom: 1px solid #30363d;">
+                  <span class="text-xs" style="color: #8b949e;">
+                    {{ passo.tipo === 'output' ? 'Output' : 'Terminal' }}
+                  </span>
+                  <button
+                    @click="copiarCodigo(passo.codigo)"
+                    class="copy-btn inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md transition-all duration-200"
+                    style="color: #8b949e;"
+                  >
+                    <i data-lucide="copy" class="h-3.5 w-3.5"></i>
+                    Copiar
+                  </button>
+                </div>
+
+                <!-- LINHAS -->
+                <div class="p-4 overflow-x-auto space-y-1">
+                  <div v-for="(linha, i) in passo.codigo" :key="i" class="flex">
+                    <span class="select-none mr-4 text-xs shrink-0" style="color: #484f58;">{{ passo.prefixo || (passo.tipo === 'output' ? '>' : '$') }}</span>
+                    <code class="whitespace-pre-wrap font-mono text-sm" :style="passo.tipo === 'output' ? { color: '#7ee787' } : { color: '#c9d1d9' }">{{ linha }}</code>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </div>
 
     <script type="module">
       import { TutorialService } from './js/services/tutorial-service.js';
@@ -209,6 +284,16 @@
       import { PlatformDetector } from './js/utils/platform-detector.js';
 
       const { createApp } = Vue;
+
+      function getInitialDarkMode() {
+        const saved = localStorage.getItem('theme');
+        if (saved) return saved === 'dark';
+        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+      }
+
+      function applyDarkMode(isDark) {
+        document.documentElement.classList.toggle('dark', isDark);
+      }
 
       createApp({
         data() {
@@ -218,10 +303,11 @@
             toast: '',
             loading: true,
             erro: null,
+            isDark: getInitialDarkMode(),
 
             plataformas: [
-              { id: 'windows', nome: 'Windows', icone: 'fab fa-windows' },
-              { id: 'ubuntu', nome: 'Ubuntu', icone: 'fab fa-linux' },
+              { id: 'windows', nome: 'Windows' },
+              { id: 'ubuntu', nome: 'Ubuntu' },
             ],
 
             tutorial: {
@@ -234,7 +320,29 @@
           };
         },
 
+        computed: {
+          totalSteps() {
+            return this.passos.filter(p => p.tipo === 'download' || p.tipo === 'configuracao').length;
+          },
+          completedSteps() {
+            return this.passos.filter((p, i) => {
+              if (p.tipo !== 'download' && p.tipo !== 'configuracao') return false;
+              return this.isPassoConcluido(i);
+            }).length;
+          },
+          progressPercent() {
+            if (this.totalSteps === 0) return 0;
+            return Math.round((this.completedSteps / this.totalSteps) * 100);
+          },
+        },
+
         methods: {
+          toggleDarkMode() {
+            this.isDark = !this.isDark;
+            localStorage.setItem('theme', this.isDark ? 'dark' : 'light');
+            applyDarkMode(this.isDark);
+          },
+
           async trocarPlataforma(id) {
             this.plataformaAtiva = id;
             StorageService.savePlataforma(id);
@@ -286,14 +394,44 @@
           getTutorialIdFromUrl() {
             const params = new URLSearchParams(window.location.search);
             return params.get('id') || 'hello-world';
-          }
+          },
+
+          getBorderColor(cor) {
+            const colors = {
+              blue: '#3b82f6',
+              yellow: '#eab308',
+              purple: '#a855f7',
+              indigo: '#6366f1',
+              green: '#22c55e',
+              gray: '#6b7280'
+            };
+            return colors[cor] || '#3b82f6';
+          },
+
+          getColorWithOpacity(cor, opacity) {
+            const colors = {
+              blue: `rgba(59,130,246,${opacity})`,
+              yellow: `rgba(234,179,8,${opacity})`,
+              purple: `rgba(168,85,247,${opacity})`,
+              indigo: `rgba(99,102,241,${opacity})`,
+              green: `rgba(34,197,94,${opacity})`,
+              gray: `rgba(107,114,128,${opacity})`
+            };
+            return colors[cor] || `rgba(59,130,246,${opacity})`;
+          },
         },
 
         async mounted() {
+          applyDarkMode(this.isDark);
           this.tutorialId = this.getTutorialIdFromUrl();
           const salvo = StorageService.loadPlataforma();
           this.plataformaAtiva = salvo || PlatformDetector.detect();
           await this.carregarConteudo();
+          this.$nextTick(() => lucide.createIcons());
+        },
+
+        updated() {
+          lucide.createIcons();
         },
       }).mount('#app');
     </script>

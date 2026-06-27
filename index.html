@@ -12,129 +12,195 @@
     <!-- Vue 3 -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <!-- Design System -->
+    <style>
+      :root {
+        --background: #ffffff;
+        --foreground: oklch(0.145 0 0);
+        --primary: #030213;
+        --primary-foreground: #ffffff;
+        --muted: #ececf0;
+        --muted-foreground: #717182;
+        --border: rgba(0, 0, 0, 0.1);
+        --radius: 0.625rem;
+        --b1: var(--background);
+        --b2: var(--muted);
+        --b3: #e2e2e8;
+        --bc: var(--foreground);
+        --p: var(--primary);
+        --pc: var(--primary-foreground);
+        --s: var(--muted);
+        --sc: var(--foreground);
+        --in: #3b82f6;
+        --inc: #ffffff;
+        --su: #22c55e;
+        --suc: #ffffff;
+        --wa: #f59e0b;
+        --wac: #ffffff;
+        --er: #ef4444;
+        --erc: #ffffff;
+      }
+      html.dark {
+        --background: oklch(0.145 0 0);
+        --foreground: oklch(0.985 0 0);
+        --primary: oklch(0.985 0 0);
+        --primary-foreground: oklch(0.145 0 0);
+        --muted: oklch(0.269 0 0);
+        --muted-foreground: oklch(0.708 0 0);
+        --border: oklch(0.269 0 0);
+        --b1: var(--background);
+        --b2: var(--muted);
+        --b3: oklch(0.32 0 0);
+        --bc: var(--foreground);
+        --p: var(--primary);
+        --pc: var(--primary-foreground);
+        --s: var(--muted);
+        --sc: var(--foreground);
+      }
+      html { color-scheme: light; }
+      html.dark { color-scheme: dark; }
+      body { background-color: var(--background); color: var(--foreground); }
+
+      /* Card animations */
+      .card-list-enter-active,
+      .card-list-leave-active {
+        transition: all 0.4s ease;
+      }
+      .card-list-enter-from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      .card-list-leave-to {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      .card-list-move {
+        transition: transform 0.4s ease;
+      }
+    </style>
   </head>
 
-  <body class="bg-base-200">
-    <div id="app" class="max-w-6xl mx-auto p-6">
+  <body>
+    <div id="app" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- HEADER -->
-      <div class="text-center mb-10">
-        <h1 class="text-4xl font-bold mb-3">
-          <i class="fas fa-graduation-cap text-primary"></i>
-          Protontypes Tutoriais 
-        </h1>
-        <p class="text-base-content/70 text-lg">
-          Escolha um tutorial para começar sua jornada de aprendizado
-        </p>
+      <div class="flex items-center justify-between mb-10">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-medium tracking-tight flex items-center gap-3">
+            <i data-lucide="graduation-cap" class="h-7 w-7" style="color: var(--primary)"></i>
+            Protontypes Tutoriais
+          </h1>
+          <p class="mt-1" style="color: var(--muted-foreground)">
+            Escolha um tutorial para começar sua jornada de aprendizado
+          </p>
+        </div>
+        <button
+          @click="toggleDarkMode"
+          class="btn btn-ghost btn-sm btn-square rounded-lg"
+          :title="isDark ? 'Modo claro' : 'Modo escuro'"
+        >
+          <i v-if="isDark" data-lucide="sun" class="h-5 w-5"></i>
+          <i v-else data-lucide="moon" class="h-5 w-5"></i>
+        </button>
       </div>
 
       <!-- FILTROS -->
-      <div class="flex flex-wrap gap-3 justify-center mb-8">
+      <div class="flex flex-wrap gap-2 mb-8">
         <button
-          @click="filtroAtivo = 'todos'"
-          :class="['btn btn-sm', filtroAtivo === 'todos' ? 'btn-primary' : 'btn-ghost']"
+          v-for="filtro in filtros"
+          :key="filtro.id"
+          @click="filtroAtivo = filtro.id"
+          class="btn btn-sm"
+          :class="filtroAtivo === filtro.id ? 'btn-primary shadow-sm' : 'btn-ghost'"
+          :style="filtroAtivo !== filtro.id ? { color: 'var(--muted-foreground)' } : {}"
         >
-          <i class="fas fa-list"></i>
-          Todos
-        </button>
-        <button
-          @click="filtroAtivo = 'iniciante'"
-          :class="['btn btn-sm', filtroAtivo === 'iniciante' ? 'btn-primary' : 'btn-ghost']"
-        >
-          <i class="fas fa-seedling"></i>
-          Iniciante
-        </button>
-        <button
-          @click="filtroAtivo = 'intermediario'"
-          :class="['btn btn-sm', filtroAtivo === 'intermediario' ? 'btn-primary' : 'btn-ghost']"
-        >
-          <i class="fas fa-layer-group"></i>
-          Intermediário
-        </button>
-        <button
-          @click="filtroAtivo = 'avancado'"
-          :class="['btn btn-sm', filtroAtivo === 'avancado' ? 'btn-primary' : 'btn-ghost']"
-        >
-          <i class="fas fa-rocket"></i>
-          Avançado
+          <i :data-lucide="filtro.icone" class="h-4 w-4"></i>
+          {{ filtro.nome }}
         </button>
       </div>
 
       <!-- LOADING -->
-      <div v-if="loading" class="text-center py-20">
-        <span class="loading loading-spinner loading-lg"></span>
-        <p class="mt-4 text-base-content/60">Carregando tutoriais...</p>
+      <div v-if="loading" class="flex items-center justify-center py-24">
+        <i data-lucide="loader" class="h-6 w-6 animate-spin" style="color: var(--muted-foreground)"></i>
+        <span class="ml-3" style="color: var(--muted-foreground)">Carregando tutoriais...</span>
       </div>
 
       <!-- ERRO -->
-      <div v-else-if="erro" class="alert alert-error max-w-2xl mx-auto">
-        <i class="fas fa-exclamation-triangle"></i>
-        <span>{{ erro }}</span>
+      <div v-else-if="erro" class="flex items-center gap-3 p-4 rounded-lg" style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);">
+        <i data-lucide="alert-triangle" class="h-5 w-5 flex-shrink-0" style="color: var(--er)"></i>
+        <span style="color: var(--er)">{{ erro }}</span>
       </div>
 
       <!-- GRID DE CARDS -->
-      <transition-group 
-        name="card-list" 
-        tag="div" 
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      <transition-group
         v-else
+        name="card-list"
+        tag="div"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
         <div
           v-for="tutorial in tutoriaisFiltrados"
           :key="tutorial.id"
-          class="card bg-base-100 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+          class="rounded-xl border transition-all duration-200 hover:shadow-md hover:-translate-y-1"
+          :style="{ borderColor: 'var(--border)', backgroundColor: 'var(--b1)' }"
         >
-          <div class="card-body">
+          <div class="p-6 flex flex-col h-full">
             <!-- BADGE NÍVEL -->
-            <div class="flex justify-between items-start mb-2">
-              <div class="badge badge-lg gap-2" :class="getBadgeClass(tutorial.nivel)">
-                <i :class="getNivelIcon(tutorial.nivel)"></i>
+            <div class="flex items-center gap-2 mb-3">
+              <span
+                class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full"
+                :style="getBadgeStyle(tutorial.nivel)"
+              >
+                <i :data-lucide="getNivelIcon(tutorial.nivel)" class="h-3.5 w-3.5"></i>
                 {{ tutorial.nivel }}
-              </div>
+              </span>
             </div>
 
             <!-- TÍTULO -->
-            <h2 class="card-title text-xl mb-2">
+            <h2 class="text-lg font-medium mb-2">
               {{ tutorial.titulo }}
             </h2>
 
             <!-- DESCRIÇÃO -->
-            <p class="text-base-content/70 text-sm mb-4 flex-grow">
+            <p class="text-sm flex-grow mb-4" style="color: var(--muted-foreground)">
               {{ tutorial.descricao }}
             </p>
 
             <!-- PLATAFORMAS -->
-            <div class="flex gap-2 mb-4">
-              <div 
-                v-for="plat in tutorial.plataformas" 
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <span
+                v-for="plat in tutorial.plataformas"
                 :key="plat"
-                class="badge badge-outline gap-1"
+                class="text-xs px-2 py-0.5 rounded-md font-medium"
+                :style="{ backgroundColor: 'var(--muted)', color: 'var(--muted-foreground)' }"
               >
-                <i :class="getPlataformaIcon(plat)"></i>
                 {{ plat }}
-              </div>
+              </span>
             </div>
 
             <!-- TAGS -->
-            <div class="flex flex-wrap gap-2 mb-4">
-              <span 
-                v-for="tag in tutorial.tags" 
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <span
+                v-for="tag in tutorial.tags"
                 :key="tag"
-                class="badge badge-sm badge-ghost"
+                class="text-xs px-2 py-0.5 rounded-md"
+                style="background-color: var(--muted); color: var(--muted-foreground)"
               >
                 #{{ tag }}
               </span>
             </div>
 
             <!-- AÇÕES -->
-            <div class="card-actions justify-end">
-              <a 
+            <div class="mt-auto pt-2">
+              <a
                 :href="`tutorial.html?id=${tutorial.id}`"
-                class="btn btn-primary btn-sm gap-2"
+                class="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200"
+                :style="{ backgroundColor: 'var(--primary)', color: 'var(--pc)' }"
               >
                 Começar
-                <i class="fas fa-arrow-right"></i>
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
               </a>
             </div>
           </div>
@@ -142,48 +208,44 @@
       </transition-group>
 
       <!-- MENSAGEM VAZIA -->
-      <div 
+      <div
         v-if="!loading && !erro && tutoriaisFiltrados.length === 0"
-        class="text-center py-20"
+        class="flex flex-col items-center justify-center py-24"
       >
-        <i class="fas fa-search text-6xl text-base-content/20 mb-4"></i>
-        <p class="text-xl text-base-content/60">
+        <div
+          class="w-14 h-14 rounded-full flex items-center justify-center mb-4"
+          :style="{ backgroundColor: 'var(--muted)' }"
+        >
+          <i data-lucide="search" class="h-6 w-6" style="color: var(--muted-foreground)"></i>
+        </div>
+        <p class="text-lg" style="color: var(--muted-foreground)">
           Nenhum tutorial encontrado nesta categoria
         </p>
       </div>
 
       <!-- FOOTER -->
-      <div class="text-center mt-16 pt-8 border-t border-base-300">
-        <p class="text-base-content/50 text-sm">
-          <i class="fas fa-code"></i>
+      <div class="mt-16 pt-8" style="border-top: 1px solid var(--border)">
+        <p class="text-sm text-center" style="color: var(--muted-foreground)">
+          <i data-lucide="code" class="h-4 w-4 inline-block align-text-bottom"></i>
           Desenvolvido com Vue 3 + TailwindCSS + DaisyUI
         </p>
       </div>
     </div>
 
-    <style>
-      /* Animações dos cards */
-      .card-list-enter-active,
-      .card-list-leave-active {
-        transition: all 0.5s ease;
-      }
-      .card-list-enter-from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      .card-list-leave-to {
-        opacity: 0;
-        transform: scale(0.9);
-      }
-      .card-list-move {
-        transition: transform 0.5s ease;
-      }
-    </style>
-
     <script type="module">
       import { TutorialService } from './js/services/tutorial-service.js';
 
       const { createApp } = Vue;
+
+      function getInitialDarkMode() {
+        const saved = localStorage.getItem('theme');
+        if (saved) return saved === 'dark';
+        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+      }
+
+      function applyDarkMode(isDark) {
+        document.documentElement.classList.toggle('dark', isDark);
+      }
 
       createApp({
         data() {
@@ -192,6 +254,13 @@
             filtroAtivo: 'todos',
             loading: true,
             erro: null,
+            isDark: getInitialDarkMode(),
+            filtros: [
+              { id: 'todos', nome: 'Todos', icone: 'list' },
+              { id: 'iniciante', nome: 'Iniciante', icone: 'sprout' },
+              { id: 'intermediario', nome: 'Intermediário', icone: 'layers' },
+              { id: 'avancado', nome: 'Avançado', icone: 'rocket' },
+            ],
           };
         },
 
@@ -205,10 +274,33 @@
         },
 
         methods: {
+          toggleDarkMode() {
+            this.isDark = !this.isDark;
+            localStorage.setItem('theme', this.isDark ? 'dark' : 'light');
+            applyDarkMode(this.isDark);
+          },
+
+          getBadgeStyle(nivel) {
+            const map = {
+              'iniciante': { backgroundColor: 'rgba(34,197,94,0.15)', color: '#16a34a' },
+              'intermediario': { backgroundColor: 'rgba(245,158,11,0.15)', color: '#d97706' },
+              'avancado': { backgroundColor: 'rgba(239,68,68,0.15)', color: '#dc2626' }
+            };
+            return map[nivel] || { backgroundColor: 'var(--muted)', color: 'var(--muted-foreground)' };
+          },
+
+          getNivelIcon(nivel) {
+            const icons = {
+              'iniciante': 'sprout',
+              'intermediario': 'layers',
+              'avancado': 'rocket'
+            };
+            return icons[nivel] || 'book';
+          },
+
           async carregarTutoriais() {
             this.loading = true;
             this.erro = null;
-
             try {
               const data = await TutorialService.listTutorials();
               this.tutoriais = data.tutoriais || [];
@@ -219,38 +311,17 @@
               this.loading = false;
             }
           },
-
-          getBadgeClass(nivel) {
-            const classes = {
-              'iniciante': 'badge-success',
-              'intermediario': 'badge-warning',
-              'avancado': 'badge-error'
-            };
-            return classes[nivel] || 'badge-info';
-          },
-
-          getNivelIcon(nivel) {
-            const icons = {
-              'iniciante': 'fas fa-seedling',
-              'intermediario': 'fas fa-layer-group',
-              'avancado': 'fas fa-rocket'
-            };
-            return icons[nivel] || 'fas fa-book';
-          },
-
-          getPlataformaIcon(plataforma) {
-            const icons = {
-              'windows': 'fab fa-windows',
-              'ubuntu': 'fab fa-linux',
-              'macos': 'fab fa-apple'
-            };
-            return icons[plataforma] || 'fas fa-desktop';
-          }
         },
 
         mounted() {
+          applyDarkMode(this.isDark);
           this.carregarTutoriais();
-        }
+          this.$nextTick(() => lucide.createIcons());
+        },
+
+        updated() {
+          lucide.createIcons();
+        },
       }).mount('#app');
     </script>
   </body>
