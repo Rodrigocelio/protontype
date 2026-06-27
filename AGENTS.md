@@ -30,6 +30,14 @@ Open `http://localhost:8000` in browser.
 - `CLAUDE.md` references external resources at `/home/zorin/Desktop/projetos/styleguide/claude-visual-style-guide/` (contains `CUSTOM_INSTRUCTIONS.txt` with colors, components, patterns). Consult these for UI work.
 - Tutorials in pt-BR. JSON fields are Portuguese.
 - Step types: `download`, `configuracao`, `output` (no type = terminal/code block).
-- Colors: `blue`, `yellow`, `purple`, `indigo`, `green`, `gray` -- map to DaisyUI border color classes.
+- Colors: `blue`, `yellow`, `purple`, `indigo`, `green`, `gray` -- map to step card left border colors (via `getBorderColor()`).
 - No TypeScript, no package.json, no bundler. Pure vanilla ES6 modules (`type="module"`).
 - Git: 2 commits. No CI, no hooks, no lint config.
+
+## Design System (applied to both pages)
+
+- **CSS custom properties** in `<style>` define design tokens (`--background`, `--foreground`, `--primary`, `--muted`, `--muted-foreground`, `--border`, `--radius`). Light/dark variants via `html.dark` selector. DaisyUI theme variables (`--b1`, `--p`, etc.) are mapped to these tokens.
+- **Dark mode** toggled by adding/removing `.dark` on `<html>`. Persisted in `localStorage` key `theme`. Initialized from localStorage or `prefers-color-scheme`. Both pages have an independent toggle.
+- **Lucide icons** replace FontAwesome. CDN: `unpkg.com/lucide@latest/dist/umd/lucide.js`. Usage: `<i data-lucide="icon-name"></i>` then `lucide.createIcons()` called in `mounted()` and `updated()` hooks. Icon sizing via `class="h-4 w-4"` (copied to SVG by Lucide).
+- **Code blocks** have a fixed dark background (`#0d1117`, GitHub-inspired) independent of page theme.
+- **Inline styles** for theming (`style="color: var(--muted-foreground)"`) preferred over DaisyUI theme classes to stay decoupled from DaisyUI internals.
