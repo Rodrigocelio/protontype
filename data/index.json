@@ -1,0 +1,28 @@
+{
+  "tutoriais": [
+    {
+      "id": "hello-world",
+      "titulo": "Hello World em C++",
+      "descricao": "Primeiro programa em C++",
+      "plataformas": ["windows", "ubuntu"],
+      "nivel": "iniciante",
+      "tags": ["basico", "compilacao"]
+    },
+    {
+      "id": "opencode-tutorial",
+      "titulo": "Instalando OpenCode",
+      "descricao": "Guia para instalar o OpenCode IDE",
+      "plataformas": ["windows", "ubuntu"],
+      "nivel": "iniciante",
+      "tags": ["ide", "instalacao"]
+    },
+    {
+      "id": "vscode-install",
+      "titulo": "Instalação do VS Code",
+      "descricao": "Guia para instalar o Visual Studio Code",
+      "plataformas": ["windows", "ubuntu"],
+      "nivel": "iniciante",
+      "tags": ["ide", "instalacao"]
+    }
+  ]
+}

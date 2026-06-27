@@ -1,0 +1,62 @@
+{
+  "titulo": "Instalando OpenCode no Windows",
+  "descricao": "Guia passo a passo para instalar o OpenCode IDE no sistema operacional Windows",
+  "passos": [
+    {
+      "titulo": "Baixar o instalador do OpenCode",
+      "cor": "blue",
+      "tipo": "download",
+      "link": "https://opencode.ai/br/download/stable/windows-x64-nsis",
+      "linkTexto": "Download OpenCode para Windows",
+      "descricaoDownload": "Versão recomendada: Stable Build (64-bit) | Tamanho: ~90MB",
+      "instrucoes": [
+        "Acesse o site oficial do OpenCode",
+        "Clique em 'Download for Windows'",
+        "Aguarde o download concluir",
+        "Localize o arquivo 'OpenCodeSetup.exe' na pasta Downloads"
+      ]
+    },
+    {
+      "titulo": "Executar o instalador",
+      "cor": "yellow",
+      "tipo": "configuracao",
+      "texto": "Execute o instalador e siga as opções recomendadas.",
+      "instrucoes": [
+        "Dê duplo clique em 'OpenCodeSetup.exe'",
+        "Clique em 'Next' para começar a instalação",
+        "Aceite os termos de licença e clique 'Next'",
+        "Escolha o diretório de instalação (padrão: C:\\Program Files\\OpenCode)",
+        "IMPORTANTE: Marque as seguintes opções:",
+        "  ✓ Adicionar ao PATH (recomendado)",
+        "  ✓ Criar atalho na Área de Trabalho",
+        "  ✓ Adicionar 'Abrir com OpenCode' ao menu de contexto",
+        "  ✓ Registrar OpenCode como editor padrão para tipos de arquivo suportados",
+        "Clique em 'Install' e aguarde a conclusão",
+        "Clique em 'Finish' para concluir"
+      ]
+    },
+    {
+      "titulo": "Verificar instalação",
+      "cor": "purple",
+      "texto": "Verifique se o OpenCode foi instalado corretamente no terminal.",
+      "codigo": [
+        "opencode --version"
+      ],
+      "instrucoes": [
+        "Abra o Prompt de Comando (cmd) ou PowerShell",
+        "Execute o comando acima",
+        "Você deve ver a versão do OpenCode instalada"
+      ]
+    },
+    {
+      "titulo": "Instalar Extensão OpenCode para Visual Studio Code",
+      "cor": "green",
+      "instrucoes": [
+        "Abra o Visual Studio Code",
+        "Vá para a aba 'Extensions'",
+        "Pesquise por 'OpenCode' e instale a extensão oficial",
+        "Reinicie o Visual Studio Code para ativar a extensão"
+      ]
+    }
+  ]
+}

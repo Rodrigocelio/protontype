@@ -1,0 +1,46 @@
+{
+    "titulo": "Instalação do VS Code no Ubuntu",
+    "descricao": "Guia passo a passo para instalar o Visual Studio Code no sistema operacional Ubuntu",
+    "passos": [
+        {
+            "titulo": "Atualizar lista de pacotes",
+            "cor": "blue",
+            "texto": "Atualize os repositórios do sistema antes de instalar novos pacotes.",
+            "codigo": [
+                "sudo apt update"
+            ],
+            "instrucoes": [
+                "Abra o terminal",
+                "Execute o comando acima",
+                "Aguarde a atualização concluir"
+            ]
+        },
+        {
+            "titulo": "Instalar Snapd",
+            "cor": "green",
+            "texto": "Instale o gerenciador de pacotes Snap para facilitar a instalação do VS Code.",
+            "codigo": [
+                "sudo apt install snapd"
+            ],
+            "instrucoes": [
+                "Abra o terminal",
+                "Execute o comando acima",
+                "Aguarde a instalação concluir"
+            ]
+        },
+        {
+            "titulo": "Instalar VS Code",
+            "cor": "purple",
+            "texto": "Use o Snap para instalar o Visual Studio Code.",
+            "codigo": [
+                "sudo snap install --classic code"
+            ],
+            "instrucoes": [
+                "Abra o terminal",
+                "Execute o comando acima",
+                "Aguarde a instalação concluir",
+                "Após a instalação, você pode abrir o VS Code digitando 'code' no terminal"
+            ]
+        }
+    ]
+    }

@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutoriais Interativos - C++</title>
+
+    <!-- Tailwind + DaisyUI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@latest/dist/full.css" rel="stylesheet" />
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  </head>
+
+  <body class="bg-base-200">
+    <div id="app" class="max-w-6xl mx-auto p-6">
+      <!-- HEADER -->
+      <div class="text-center mb-10">
+        <h1 class="text-4xl font-bold mb-3">
+          <i class="fas fa-graduation-cap text-primary"></i>
+          Protontypes Tutoriais 
+        </h1>
+        <p class="text-base-content/70 text-lg">
+          Escolha um tutorial para começar sua jornada de aprendizado
+        </p>
+      </div>
+
+      <!-- FILTROS -->
+      <div class="flex flex-wrap gap-3 justify-center mb-8">
+        <button
+          @click="filtroAtivo = 'todos'"
+          :class="['btn btn-sm', filtroAtivo === 'todos' ? 'btn-primary' : 'btn-ghost']"
+        >
+          <i class="fas fa-list"></i>
+          Todos
+        </button>
+        <button
+          @click="filtroAtivo = 'iniciante'"
+          :class="['btn btn-sm', filtroAtivo === 'iniciante' ? 'btn-primary' : 'btn-ghost']"
+        >
+          <i class="fas fa-seedling"></i>
+          Iniciante
+        </button>
+        <button
+          @click="filtroAtivo = 'intermediario'"
+          :class="['btn btn-sm', filtroAtivo === 'intermediario' ? 'btn-primary' : 'btn-ghost']"
+        >
+          <i class="fas fa-layer-group"></i>
+          Intermediário
+        </button>
+        <button
+          @click="filtroAtivo = 'avancado'"
+          :class="['btn btn-sm', filtroAtivo === 'avancado' ? 'btn-primary' : 'btn-ghost']"
+        >
+          <i class="fas fa-rocket"></i>
+          Avançado
+        </button>
+      </div>
+
+      <!-- LOADING -->
+      <div v-if="loading" class="text-center py-20">
+        <span class="loading loading-spinner loading-lg"></span>
+        <p class="mt-4 text-base-content/60">Carregando tutoriais...</p>
+      </div>
+
+      <!-- ERRO -->
+      <div v-else-if="erro" class="alert alert-error max-w-2xl mx-auto">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>{{ erro }}</span>
+      </div>
+
+      <!-- GRID DE CARDS -->
+      <transition-group 
+        name="card-list" 
+        tag="div" 
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        v-else
+      >
+        <div
+          v-for="tutorial in tutoriaisFiltrados"
+          :key="tutorial.id"
+          class="card bg-base-100 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+        >
+          <div class="card-body">
+            <!-- BADGE NÍVEL -->
+            <div class="flex justify-between items-start mb-2">
+              <div class="badge badge-lg gap-2" :class="getBadgeClass(tutorial.nivel)">
+                <i :class="getNivelIcon(tutorial.nivel)"></i>
+                {{ tutorial.nivel }}
+              </div>
+            </div>
+
+            <!-- TÍTULO -->
+            <h2 class="card-title text-xl mb-2">
+              {{ tutorial.titulo }}
+            </h2>
+
+            <!-- DESCRIÇÃO -->
+            <p class="text-base-content/70 text-sm mb-4 flex-grow">
+              {{ tutorial.descricao }}
+            </p>
+
+            <!-- PLATAFORMAS -->
+            <div class="flex gap-2 mb-4">
+              <div 
+                v-for="plat in tutorial.plataformas" 
+                :key="plat"
+                class="badge badge-outline gap-1"
+              >
+                <i :class="getPlataformaIcon(plat)"></i>
+                {{ plat }}
+              </div>
+            </div>
+
+            <!-- TAGS -->
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span 
+                v-for="tag in tutorial.tags" 
+                :key="tag"
+                class="badge badge-sm badge-ghost"
+              >
+                #{{ tag }}
+              </span>
+            </div>
+
+            <!-- AÇÕES -->
+            <div class="card-actions justify-end">
+              <a 
+                :href="`tutorial.html?id=${tutorial.id}`"
+                class="btn btn-primary btn-sm gap-2"
+              >
+                Começar
+                <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </transition-group>
+
+      <!-- MENSAGEM VAZIA -->
+      <div 
+        v-if="!loading && !erro && tutoriaisFiltrados.length === 0"
+        class="text-center py-20"
+      >
+        <i class="fas fa-search text-6xl text-base-content/20 mb-4"></i>
+        <p class="text-xl text-base-content/60">
+          Nenhum tutorial encontrado nesta categoria
+        </p>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="text-center mt-16 pt-8 border-t border-base-300">
+        <p class="text-base-content/50 text-sm">
+          <i class="fas fa-code"></i>
+          Desenvolvido com Vue 3 + TailwindCSS + DaisyUI
+        </p>
+      </div>
+    </div>
+
+    <style>
+      /* Animações dos cards */
+      .card-list-enter-active,
+      .card-list-leave-active {
+        transition: all 0.5s ease;
+      }
+      .card-list-enter-from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      .card-list-leave-to {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      .card-list-move {
+        transition: transform 0.5s ease;
+      }
+    </style>
+
+    <script type="module">
+      import { TutorialService } from './js/services/tutorial-service.js';
+
+      const { createApp } = Vue;
+
+      createApp({
+        data() {
+          return {
+            tutoriais: [],
+            filtroAtivo: 'todos',
+            loading: true,
+            erro: null,
+          };
+        },
+
+        computed: {
+          tutoriaisFiltrados() {
+            if (this.filtroAtivo === 'todos') {
+              return this.tutoriais;
+            }
+            return this.tutoriais.filter(t => t.nivel === this.filtroAtivo);
+          }
+        },
+
+        methods: {
+          async carregarTutoriais() {
+            this.loading = true;
+            this.erro = null;
+
+            try {
+              const data = await TutorialService.listTutorials();
+              this.tutoriais = data.tutoriais || [];
+            } catch (error) {
+              this.erro = 'Erro ao carregar tutoriais: ' + error.message;
+              console.error(error);
+            } finally {
+              this.loading = false;
+            }
+          },
+
+          getBadgeClass(nivel) {
+            const classes = {
+              'iniciante': 'badge-success',
+              'intermediario': 'badge-warning',
+              'avancado': 'badge-error'
+            };
+            return classes[nivel] || 'badge-info';
+          },
+
+          getNivelIcon(nivel) {
+            const icons = {
+              'iniciante': 'fas fa-seedling',
+              'intermediario': 'fas fa-layer-group',
+              'avancado': 'fas fa-rocket'
+            };
+            return icons[nivel] || 'fas fa-book';
+          },
+
+          getPlataformaIcon(plataforma) {
+            const icons = {
+              'windows': 'fab fa-windows',
+              'ubuntu': 'fab fa-linux',
+              'macos': 'fab fa-apple'
+            };
+            return icons[plataforma] || 'fas fa-desktop';
+          }
+        },
+
+        mounted() {
+          this.carregarTutoriais();
+        }
+      }).mount('#app');
+    </script>
+  </body>
+</html>

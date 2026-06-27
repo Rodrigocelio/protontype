@@ -1,0 +1,63 @@
+{
+  "titulo": "Hello World em C++",
+  "descricao": "Guia para diferentes sistemas operacionais",
+  "passos": [
+    {
+      "titulo": "Instalar MinGW",
+      "cor": "blue",
+      "tipo": "download",
+      "link": "https://www.mingw-w64.org/",
+      "linkTexto": "Site oficial MinGW-w64",
+      "descricaoDownload": "Versão recomendada: GCC 13.x ou superior | Arquitetura: x86_64"
+    },
+    {
+      "titulo": "Adicionar ao PATH",
+      "tipo": "configuracao",
+      "texto": "Adicione o MinGW nas variáveis de ambiente.",
+      "cor": "yellow",
+      "codigo": ["C:\\mingw64\\bin"],
+      "instrucoes": [
+        "Abra 'Variáveis de Ambiente' (Win + Pause ou Painel de Controle)",
+        "Clique em 'Variáveis de Ambiente'",
+        "Em 'Variáveis do Sistema', procure 'Path' e clique 'Editar'",
+        "Clique 'Novo' e adicione: C:\\mingw64\\bin",
+        "Clique OK em todos os diálogos e reinicie o terminal"
+      ]
+    },
+    {
+      "titulo": "Verificar instalação",
+      "cor": "purple",
+      "codigo": ["g++ --version"]
+    },
+    {
+      "titulo": "Criar arquivo",
+      "cor": "yellow",
+      "codigo": ["code main.cpp"]
+    },
+    {
+      "titulo": "Escrever código",
+      "texto": "Cole o código abaixo:",
+      "cor": "indigo",
+      "codigo": [
+        "#include <iostream>",
+        "",
+        "int main() {",
+        "    std::cout << \"Hello, World!\" << std::endl;",
+        "    return 0;",
+        "}"
+      ],
+      "prefixo": ""
+    },
+    {
+      "titulo": "Compilar código",
+      "cor": "green",
+      "codigo": ["g++ main.cpp -o hello", ".\\hello"]
+    },
+    {
+      "titulo": "Saída esperada",
+      "tipo": "output",
+      "cor": "gray",
+      "codigo": ["Hello, World!"]
+    }
+  ]
+}

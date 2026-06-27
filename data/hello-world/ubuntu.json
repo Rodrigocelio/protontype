@@ -1,0 +1,51 @@
+{
+  "titulo": "Hello World em C++",
+  "descricao": "Guia para diferentes sistemas operacionais",
+  "passos": [
+    {
+      "titulo": "Instalar g++",
+      "cor": "blue",
+      "tipo": "download",
+      "texto": "O compilador GCC vem nos repositórios do Ubuntu.",
+      "codigo": [
+        "sudo apt update",
+        "sudo apt install build-essential"
+      ],
+      "instrucoes": [
+        "Execute os comandos acima no terminal",
+        "Confirme digitando 'S' se pedido",
+        "Aguarde a instalação concluir (1-2 minutos)"
+      ]
+    },
+    {
+      "titulo": "Criar arquivo",
+      "cor": "yellow",
+      "codigo": ["nano main.cpp"]
+    },
+    {
+      "titulo": "Escrever código",
+      "texto": "Cole o código abaixo:",
+      "cor": "indigo",
+      "codigo": [
+        "#include <iostream>",
+        "",
+        "int main() {",
+        "    std::cout << \"Hello, World!\" << std::endl;",
+        "    return 0;",
+        "}"
+      ],
+      "prefixo": ""
+    },
+    {
+      "titulo": "Compilar código",
+      "cor": "green",
+      "codigo": ["g++ main.cpp -o hello", "./hello"]
+    },
+    {
+      "titulo": "Saída esperada",
+      "tipo": "output",
+      "cor": "gray",
+      "codigo": ["Hello, World!"]
+    }
+  ]
+}

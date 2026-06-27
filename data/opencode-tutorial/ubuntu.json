@@ -1,0 +1,77 @@
+{
+    "titulo": "Instalando OpenCode no Ubuntu",
+    "descricao": "Guia passo a passo para instalar o OpenCode IDE no sistema operacional Ubuntu",
+    "passos": [
+        {
+            "titulo": "Atualizar lista de pacotes",
+            "cor": "blue",
+            "texto": "Atualize os repositórios do sistema antes de instalar novos pacotes.",
+            "codigo": [
+                "sudo apt update"
+            ],
+            "instrucoes": [
+                "Abra o terminal",
+                "Execute o comando acima",
+                "Aguarde a atualização concluir"
+            ]
+        },
+        {
+            "titulo": "Instalar curl",
+            "cor": "yellow",
+            "texto": "O curl é necessário para baixar o script de instalação do OpenCode.",
+            "codigo": [
+                "sudo apt install curl"
+            ],
+            "instrucoes": [
+                "Execute o comando acima no terminal",
+                "Confirme digitando 'S' ou 'Y' se pedido",
+                "Aguarde a instalação concluir"
+            ]
+        },
+        {
+            "titulo": "Instalar OpenCode",
+            "cor": "green",
+            "tipo": "download",
+            "texto": "Execute o script oficial de instalação do OpenCode.",
+            "codigo": [
+                "curl -fsSL https://opencode.ai/install | bash"
+            ],
+            "instrucoes": [
+                "Execute o comando acima no terminal",
+                "O script irá baixar e instalar o OpenCode automaticamente",
+                "Aguarde a conclusão da instalação",
+                "Reinicie o terminal após a instalação"
+            ]
+        },
+        {
+            "titulo": "Instalar extensão OpenCode no VS Code",
+            "cor": "purple",
+            "tipo": "configuracao",
+            "texto": "Adicione a extensão do OpenCode no Visual Studio Code para integração completa.",
+            "instrucoes": [
+                "Abra o VS Code",
+                "Pressione Ctrl+Shift+X para abrir o painel de extensões",
+                "Digite 'OpenCode' na barra de pesquisa",
+                "Clique em 'Install' na extensão oficial do OpenCode",
+                "Aguarde a instalação concluir",
+                "Reinicie o VS Code se solicitado"
+            ]
+        },
+        {
+            "titulo": "Verificar instalação",
+            "cor": "indigo",
+            "texto": "Verifique se o OpenCode foi instalado corretamente.",
+            "codigo": [
+                "opencode --version"
+            ]
+        },
+        {
+            "titulo": "Saída esperada",
+            "tipo": "output",
+            "cor": "gray",
+            "codigo": [
+                "OpenCode version 1.x.x"
+            ]
+        }
+    ]
+}

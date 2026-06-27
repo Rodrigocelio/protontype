@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutorial - C++</title>
+
+    <!-- Tailwind + DaisyUI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@latest/dist/full.css" rel="stylesheet" />
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  </head>
+
+  <body class="bg-base-200">
+    <div id="app" class="max-w-4xl mx-auto p-6">
+      <!-- BREADCRUMB -->
+      <div class="text-sm breadcrumbs mb-4">
+        <ul>
+          <li><a href="index.html" class="link link-hover"><i class="fas fa-home mr-1"></i>Início</a></li>
+          <li>{{ tutorial.titulo }}</li>
+        </ul>
+      </div>
+
+      <!-- TOAST -->
+      <div class="toast toast-end z-50" v-if="toast">
+        <div class="alert alert-success shadow-lg">
+          <span>{{ toast }}</span>
+        </div>
+      </div>
+
+      <!-- HEADER -->
+      <div class="mb-6">
+        <h1 class="text-3xl font-bold mb-1">{{ tutorial.titulo }}</h1>
+        <p class="text-base-content/70 text-sm leading-relaxed">
+          {{ tutorial.descricao }}
+        </p>
+      </div>
+
+      <!-- TABS -->
+      <div role="tablist" class="tabs tabs-boxed bg-base-100 p-1 shadow mb-6">
+        <a
+          v-for="p in plataformas"
+          :key="p.id"
+          role="tab"
+          @click="trocarPlataforma(p.id)"
+          :class="[
+            'tab flex gap-2 items-center transition-all duration-300',
+            plataformaAtiva === p.id
+              ? 'tab-active font-semibold'
+              : 'opacity-70 hover:opacity-100'
+          ]"
+        >
+          <i :class="p.icone"></i>
+          {{ p.nome }}
+        </a>
+      </div>
+
+      <!-- LOADING -->
+      <div v-if="loading" class="text-center py-10">
+        <span class="loading loading-spinner loading-lg"></span>
+      </div>
+
+      <!-- ERRO -->
+      <div v-else-if="erro" class="alert alert-error">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>{{ erro }}</span>
+      </div>
+
+      <!-- CONTEÚDO -->
+      <transition name="fade" mode="out-in">
+        <div v-if="passos.length" :key="plataformaAtiva">
+          <div
+            v-for="(passo, index) in passos"
+            :key="index"
+            class="collapse collapse-arrow bg-base-100 mb-4 border-l-4 shadow transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+            :class="[
+              'border-' + passo.cor + '-500',
+              isPassoManual(passo) && isPassoConcluido(index) ? 'opacity-60' : ''
+            ]"
+          >
+            <!-- ABRE PRIMEIRO PASSO -->
+            <input type="checkbox" :checked="index === 0" />
+
+            <!-- TÍTULO -->
+            <div class="collapse-title">
+              <h2 class="font-semibold text-lg flex items-center gap-3">
+                {{ index + 1 }}. {{ passo.titulo }}
+                <span
+                  v-if="isPassoManual(passo) && isPassoConcluido(index)"
+                  class="badge badge-success gap-1 text-xs"
+                >
+                  <i class="fas fa-check"></i> Concluído
+                </span>
+              </h2>
+            </div>
+
+            <!-- CONTEÚDO -->
+            <div class="collapse-content">
+              <!-- ALERTA DOWNLOAD/CONFIG -->
+              <div
+                v-if="passo.tipo === 'download' || passo.tipo === 'configuracao'"
+                class="alert mb-4"
+                :class="passo.tipo === 'download' ? 'alert-info' : 'alert-warning'"
+              >
+                <i :class="passo.tipo === 'download' ? 'fas fa-download' : 'fas fa-wrench'"></i>
+                <span>
+                  {{ passo.tipo === 'download' ? 'Download necessário' : 'Passo manual necessário' }}
+                </span>
+              </div>
+
+              <!-- LINK PARA DOWNLOAD -->
+              <div v-if="passo.link" class="mb-4">
+                <a
+                  :href="passo.link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn btn-sm btn-primary gap-2"
+                >
+                  <i class="fas fa-external-link-alt"></i>
+                  {{ passo.linkTexto || 'Ir para o site' }}
+                </a>
+              </div>
+
+              <!-- DESCRIÇÃO DO DOWNLOAD -->
+              <div v-if="passo.descricaoDownload" class="bg-base-200 p-3 rounded mb-3 text-sm">
+                <span class="font-semibold">📋 Recomendações:</span>
+                <p class="mt-1">{{ passo.descricaoDownload }}</p>
+              </div>
+
+              <!-- INSTRUÇÕES PASSO A PASSO -->
+              <div v-if="passo.instrucoes" class="mb-4">
+                <div class="font-semibold text-sm mb-2 flex items-center gap-2">
+                  <i class="fas fa-list-ol"></i>
+                  Passos:
+                </div>
+                <ul class="list-decimal list-inside space-y-1 text-sm opacity-90">
+                  <li v-for="(instr, i) in passo.instrucoes" :key="i">
+                    {{ instr }}
+                  </li>
+                </ul>
+              </div>
+
+              <!-- TEXTO -->
+              <p
+                v-if="passo.texto"
+                class="mb-3 text-base-content/70 text-sm leading-relaxed"
+              >
+                {{ passo.texto }}
+              </p>
+
+              <!-- CÓDIGO -->
+              <div
+                v-if="passo.codigo"
+                class="mockup-code text-sm relative overflow-x-auto"
+              >
+                <!-- HEADER -->
+                <div class="flex justify-between items-center mb-2 px-2">
+                  <span class="text-xs opacity-60">
+                    {{ passo.tipo === 'output' ? 'Output' : 'Terminal' }}
+                  </span>
+
+                  <!-- BOTÃO COPIAR -->
+                  <button
+                    @click="copiarCodigo(passo.codigo)"
+                    class="btn btn-xs btn-ghost"
+                  >
+                    <i class="fas fa-copy"></i>
+                  </button>
+                </div>
+
+                <!-- LINHAS -->
+                <div v-for="(linha, i) in passo.codigo" :key="i">
+                  <pre
+                    class="whitespace-pre-wrap"
+                    :data-prefix="passo.prefixo || (passo.tipo === 'output' ? '>' : '$')"
+                    :class="passo.tipo === 'output' ? 'text-green-400' : ''"
+                  ><code>{{ linha }}</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </div>
+
+    <style>
+      .fade-enter-active,
+      .fade-leave-active {
+        transition: all 0.25s ease;
+      }
+      .fade-enter-from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      .fade-leave-to {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+    </style>
+
+    <script type="module">
+      import { TutorialService } from './js/services/tutorial-service.js';
+      import { StorageService } from './js/services/storage-service.js';
+      import { PlatformDetector } from './js/utils/platform-detector.js';
+
+      const { createApp } = Vue;
+
+      createApp({
+        data() {
+          return {
+            tutorialId: '',
+            plataformaAtiva: 'windows',
+            toast: '',
+            loading: true,
+            erro: null,
+
+            plataformas: [
+              { id: 'windows', nome: 'Windows', icone: 'fab fa-windows' },
+              { id: 'ubuntu', nome: 'Ubuntu', icone: 'fab fa-linux' },
+            ],
+
+            tutorial: {
+              titulo: '',
+              descricao: ''
+            },
+
+            passos: [],
+            passosConcluidos: {},
+          };
+        },
+
+        methods: {
+          async trocarPlataforma(id) {
+            this.plataformaAtiva = id;
+            StorageService.savePlataforma(id);
+            await this.carregarConteudo();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          },
+
+          async carregarConteudo() {
+            this.loading = true;
+            this.erro = null;
+
+            try {
+              const data = await TutorialService.loadTutorial(this.tutorialId, this.plataformaAtiva);
+              
+              this.tutorial.titulo = data.titulo;
+              this.tutorial.descricao = data.descricao;
+              this.passos = data.passos;
+            } catch (error) {
+              this.erro = 'Erro ao carregar tutorial: ' + error.message;
+              console.error(error);
+            } finally {
+              this.loading = false;
+            }
+          },
+
+          copiarCodigo(linhas) {
+            const texto = linhas.join('\n');
+
+            navigator.clipboard.writeText(texto).then(() => {
+              this.toast = 'Código copiado!';
+              setTimeout(() => (this.toast = ''), 2000);
+            });
+          },
+
+          marcarComoConcluido(index) {
+            const key = `${this.plataformaAtiva}-${index}`;
+            this.passosConcluidos[key] = !this.passosConcluidos[key];
+          },
+
+          isPassoConcluido(index) {
+            const key = `${this.plataformaAtiva}-${index}`;
+            return this.passosConcluidos[key] || false;
+          },
+
+          isPassoManual(passo) {
+            return passo.tipo === 'download' || passo.tipo === 'configuracao';
+          },
+
+          getTutorialIdFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id') || 'hello-world';
+          }
+        },
+
+        async mounted() {
+          this.tutorialId = this.getTutorialIdFromUrl();
+          const salvo = StorageService.loadPlataforma();
+          this.plataformaAtiva = salvo || PlatformDetector.detect();
+          await this.carregarConteudo();
+        },
+      }).mount('#app');
+    </script>
+  </body>
+</html>
