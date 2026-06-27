@@ -5,6 +5,7 @@
         {
             "titulo": "Baixar o instalador do VS Code",
             "cor": "blue",
+            "tipo": "download",
             "texto": "Acesse o site oficial do Visual Studio Code e baixe o instalador para Windows.",
             "instrucoes": [
                 "Abra o navegador de sua preferência",
@@ -16,6 +17,7 @@
         {
             "titulo": "Executar o instalador",
             "cor": "green",
+            "tipo": "execution",
             "texto": "Localize o arquivo baixado e execute-o para iniciar a instalação.",
             "instrucoes": [
                 "Navegue até a pasta onde o instalador foi salvo",
