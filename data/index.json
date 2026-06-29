@@ -23,6 +23,14 @@
       "plataformas": ["windows", "ubuntu"],
       "nivel": "iniciante",
       "tags": ["ide", "instalacao"]
+    },
+    {
+      "id": "nvm",
+      "titulo": "Instalar NVM no Ubuntu",
+      "descricao": "Guia para instalar o Node Version Manager (NVM) no Ubuntu",
+      "plataformas": ["ubuntu"],
+      "nivel": "iniciante",
+      "tags": ["nodejs", "nvm", "instalacao"]
     }
   ]
 }

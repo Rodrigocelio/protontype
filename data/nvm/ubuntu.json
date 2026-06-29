@@ -1,0 +1,45 @@
+{
+  "titulo": "Instalar NVM no Ubuntu",
+  "descricao": "Guia para instalar o Node Version Manager (NVM) no Ubuntu",
+  "passos": [
+    {
+      "titulo": "Instale o curl (caso ainda não o tenha):",
+      "cor": "blue",
+      "tipo": "info",
+        "texto": "O curl é uma ferramenta de linha de comando para transferir dados com URLs.",
+        "codigo": [
+          "sudo apt update",
+          "sudo apt install curl"
+        ],
+        "instrucoes": [
+          "Execute os comandos acima no terminal",
+          "Confirme digitando 'S' se pedido",
+          "Aguarde a instalação concluir (1-2 minutos)"
+        ]
+    },
+    {
+      "titulo": "Execute o script de instalação oficial:",
+      "cor": "green",
+      "tipo": "info",
+      "texto": "O script de instalação oficial do NVM irá configurar o ambiente para você usar múltiplas versões do Node.js.",
+      "codigo": [
+        "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash"
+      ],
+      "instrucoes": [
+        "Execute o comando acima no terminal",
+        "Verifique a instalação com 'nvm --version'"
+      ]
+    },
+    {
+      "titulo": "Reinicie o terminal ou carregue o NVM:",
+      "cor": "yellow",
+      "tipo": "info",
+      "texto": "Para que as alterações tenham efeito, você precisa reiniciar o terminal ou carregar o NVM manualmente.",
+      "codigo": [
+        "source ~/.bashrc"
+      ],
+      "instrucoes": [
+        "Execute o comando acima no terminal",
+        "Ou feche e abra o terminal novamente"
+      ]
+    } ] }
